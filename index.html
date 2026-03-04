@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore India - Travel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+html{scroll-behavior:smooth}
+body{background:#f4f9ff;color:#333}
+
+header{position:fixed;top:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);transition:0.3s;z-index:1000}
+header.scrolled{padding:8px 30px;box-shadow:0 5px 25px rgba(0,0,0,0.15)}
+header h1{color:#1e88e5;font-size:22px}
+nav a{text-decoration:none;margin-left:20px;color:#555;font-weight:500}
+nav a:hover{color:#1e88e5}
+
+.slider{height:90vh;background:url('https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;display:flex;justify-content:center;align-items:center;position:relative}
+.slider::after{content:"";position:absolute;width:100%;height:100%;background:linear-gradient(to bottom,rgba(0,0,0,0.3),rgba(0,0,0,0.6));}
+.hero-content{position:relative;color:white;text-align:center;z-index:1}
+.hero-content h2{font-size:40px;margin-bottom:20px}
+
+.search-bar{margin-top:20px;display:flex;justify-content:center}
+.search-bar input{padding:12px 20px;width:250px;border:none;border-radius:30px 0 0 30px;outline:none}
+.search-bar button{padding:12px 20px;border:none;background:#1e88e5;color:white;border-radius:0 30px 30px 0;cursor:pointer}
+.search-bar button:hover{background:#1565c0}
+
+.results{margin-top:20px;color:white;font-weight:500}
+
+.stats{display:flex;justify-content:space-around;flex-wrap:wrap;padding:60px 20px;background:white}
+.stat{text-align:center;margin:20px}
+.stat h3{font-size:35px;color:#1e88e5}
+
+.section-title{text-align:center;margin:40px 0 20px;font-size:28px;color:#1e88e5}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;padding:20px}
+.card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.08);transition:0.4s;opacity:0;transform:translateY(40px)}
+.card.show{opacity:1;transform:translateY(0)}
+.card:hover{transform:translateY(-10px) scale(1.02)}
+.card img{width:100%;height:180px;object-fit:cover}
+.card-content{padding:15px}
+.card-content h3{color:#1e88e5;margin-bottom:8px}
+
+.booking{background:#ffffff;padding:60px 20px;text-align:center}
+.booking input,.booking button{padding:10px;margin:8px;border-radius:8px;border:1px solid #ccc}
+.booking button{background:#1e88e5;color:white;border:none;cursor:pointer}
+.booking button:hover{background:#1565c0}
+
+footer{text-align:center;padding:20px;background:white;margin-top:40px}
+
+@media(max-width:600px){.hero-content h2{font-size:26px}.search-bar input{width:180px}}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Explore India</h1>
+<nav>
+<a href="#home">Home</a>
+<a href="#destinations">Destinations</a>
+<a href="#booking">Book</a>
+</nav>
+</header>
+
+<section class="slider" id="home">
+<div class="hero-content">
+<h2>Discover Incredible India</h2>
+<div class="search-bar">
+<input type="text" id="searchInput" placeholder="Search city...">
+<button onclick="searchCity()">Search</button>
+</div>
+<div class="results" id="results"></div>
+</div>
+</section>
+
+<section class="stats">
+<div class="stat"><h3 class="counter" data-target="15">0</h3><p>Cities</p></div>
+<div class="stat"><h3 class="counter" data-target="120">0</h3><p>Tours</p></div>
+<div class="stat"><h3 class="counter" data-target="5000">0</h3><p>Happy Travelers</p></div>
+</section>
+
+<h2 class="section-title" id="destinations">Top Destinations</h2>
+
+<section class="cards">
+<div class="card"><img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=800&q=80"><div class="card-content"><h3>Delhi</h3><p>Capital city full of heritage.</p></div></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=800&q=80"><div class="card-content"><h3>Mumbai</h3><p>The city that never sleeps.</p></div></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1587922546307-776227941871?auto=format&fit=crop&w=800&q=80"><div class="card-content"><h3>Goa</h3><p>Beaches and nightlife.</p></div></div>
+<div class="card"><img src="images/manali.jpg" alt="Manali Hills"><div class="card-content"><h3>Manali</h3><p>A beautiful hill station in Himachal Pradesh known for snow and adventure.</p></div></div>
+</section>
+
+<section class="booking" id="booking">
+<h2>Book Your Tour</h2>
+<input type="text" id="name" placeholder="Your Name">
+<input type="email" id="email" placeholder="Your Email">
+<input type="text" id="city" placeholder="City">
+<button onclick="bookTour()">Submit</button>
+<p id="bookingMsg"></p>
+</section>
+
+<footer>© Explore India </footer>
+
+<script>
+
+// Navbar animation
+window.addEventListener('scroll',()=>{const header=document.querySelector('header');if(window.scrollY>50){header.classList.add('scrolled')}else{header.classList.remove('scrolled')}})
+
+// Counter animation
+const counters=document.querySelectorAll('.counter');const speed=200;
+counters.forEach(counter=>{const updateCount=()=>{const target=+counter.getAttribute('data-target');const count=+counter.innerText;const inc=target/speed;if(count<target){counter.innerText=Math.ceil(count+inc);setTimeout(updateCount,20)}else{counter.innerText=target}};updateCount()})
+
+// Scroll reveal
+const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('show')}})},{threshold:0.2});
+document.querySelectorAll('.card').forEach(card=>observer.observe(card));
+
+// Backend Search Integration
+async function searchCity(){
+const query=document.getElementById('searchInput').value;
+const res=await fetch('http://localhost:5000/api/search?q='+query);
+const data=await res.json();
+document.getElementById('results').innerText=data.message;
+}
+
+// Backend Booking Integration
+async function bookTour(){
+const name=document.getElementById('name').value;
+const email=document.getElementById('email').value;
+const city=document.getElementById('city').value;
+
+const res=await fetch('http://localhost:5000/api/book',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({name,email,city})
+});
+
+const data=await res.json();
+document.getElementById('bookingMsg').innerText=data.message;
+}
+
+</script>
+
+</body>
+</html>
